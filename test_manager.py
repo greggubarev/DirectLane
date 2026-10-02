@@ -14,6 +14,15 @@ loader.exec_module(app)
 
 
 class DomainTests(unittest.TestCase):
+    def test_catalog_search_finds_both_languages_and_domain(self):
+        catalog = app.load_catalog()
+        self.assertGreaterEqual(len(catalog), 40)
+        item = catalog["sberbank.ru"]
+        self.assertTrue(app.catalog_matches(item, "СБЕР"))
+        self.assertTrue(app.catalog_matches(item, "sber"))
+        self.assertTrue(app.catalog_matches(item, "bank.ru"))
+        self.assertFalse(app.catalog_matches(item, "ozon"))
+
     def test_normalizes_url_and_idn(self):
         self.assertEqual(app.normalize_domain("https://RU.Wikipedia.org/wiki/Test"), "ru.wikipedia.org")
         self.assertEqual(app.normalize_domain("пример.рф"), "xn--e1afmkfd.xn--p1ai")

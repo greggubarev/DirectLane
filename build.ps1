@@ -10,12 +10,14 @@ $taskPython = Join-Path $PSScriptRoot '.venv\Scripts\python.exe'
 if ($LASTEXITCODE -ne 0) { throw 'Could not install build dependencies.' }
 
 & $taskPython -m PyInstaller --noconfirm --clean --windowed --onedir --name DirectLane `
-    --add-data 'routes.ps1;.' --add-data 'catalog.json;.' `
+    --icon 'assets/directlane.ico' `
+    --add-data 'routes.ps1;.' --add-data 'catalog.json;.' --add-data 'assets/directlane.ico;assets' `
     --distpath dist --workpath build\onedir manager.pyw
 if ($LASTEXITCODE -ne 0) { throw 'Portable build failed.' }
 
 & $taskPython -m PyInstaller --noconfirm --clean --windowed --onefile --name DirectLane `
-    --add-data 'routes.ps1;.' --add-data 'catalog.json;.' `
+    --icon 'assets/directlane.ico' `
+    --add-data 'routes.ps1;.' --add-data 'catalog.json;.' --add-data 'assets/directlane.ico;assets' `
     --distpath dist-single --workpath build\single manager.pyw
 if ($LASTEXITCODE -ne 0) { throw 'Single-file build failed.' }
 

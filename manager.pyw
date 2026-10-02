@@ -20,6 +20,7 @@ DATA_DIR = Path(os.environ.get("LOCALAPPDATA", APP_DIR)) / "DirectLane"
 STATE_PATH = DATA_DIR / "domains.json"
 BRIDGE = Path(getattr(sys, "_MEIPASS", APP_DIR)) / "routes.ps1"
 CATALOG_PATH = Path(getattr(sys, "_MEIPASS", APP_DIR)) / "catalog.json"
+ICON_PATH = Path(getattr(sys, "_MEIPASS", APP_DIR)) / "assets" / "directlane.ico"
 METRIC = 42
 LANG = "en"
 RU = {
@@ -49,6 +50,7 @@ RU = {
     "Remove selected": "Удалить выбранный",
     "Refresh view": "Обновить экран",
     "Choose a site and press Add. DNS addresses are checked when you add it.": "Выберите сайт и нажмите «Добавить». IP проверяются при добавлении.",
+    "Search sites": "Поиск сайтов",
     "Site": "Сайт",
     "Domain": "Домен",
     "+ Add selected site": "+ Добавить выбранный сайт",
@@ -76,6 +78,11 @@ def tr(message, **kwargs):
 def load_catalog():
     entries = json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     return {item["domain"]: item for item in entries}
+
+
+def catalog_matches(item, query):
+    query = query.strip().casefold()
+    return not query or any(query in str(item[key]).casefold() for key in ("domain", "name_en", "name_ru"))
 
 
 def normalize_domain(value):
@@ -314,6 +321,11 @@ class Window:
         self.details.configure(state="disabled")
         self.catalog_intro = ttk.Label(popular)
         self.catalog_intro.pack(anchor="w", pady=(0, 8))
+        self.catalog_search_label = ttk.Label(popular)
+        self.catalog_search_label.pack(anchor="w")
+        self.catalog_search_value = tk.StringVar()
+        self.catalog_search_value.trace_add("write", lambda *_: self.render_catalog())
+        ttk.Entry(popular, textvariable=self.catalog_search_value).pack(fill="x", pady=(3, 8))
         self.catalog_tree = ttk.Treeview(popular, columns=("site", "domain"), show="headings")
         self.catalog_tree.column("site", width=300)
         self.catalog_tree.column("domain", width=320)
@@ -347,13 +359,11 @@ class Window:
         self.delete_button.configure(text=tr("Remove selected"))
         self.reload_button.configure(text=tr("Refresh view"))
         self.catalog_intro.configure(text=tr("Choose a site and press Add. DNS addresses are checked when you add it."))
+        self.catalog_search_label.configure(text=tr("Search sites"))
         self.catalog_tree.heading("site", text=tr("Site"))
         self.catalog_tree.heading("domain", text=tr("Domain"))
         self.catalog_button.configure(text=tr("+ Add selected site"))
-        self.catalog_tree.delete(*self.catalog_tree.get_children())
-        for domain, item in self.catalog.items():
-            self.catalog_tree.insert("", "end", iid=domain,
-                                     values=(item["name_ru"] if LANG == "ru" else item["name_en"], domain))
+        self.render_catalog()
         self.old_intro.configure(text=tr("These routes were created outside DirectLane and are shown for reference."))
         self.existing_tree.heading("network", text=tr("Network"))
         self.existing_tree.heading("gateway", text=tr("Gateway"))
@@ -364,6 +374,17 @@ class Window:
             save_state(state)
             if self.snapshot:
                 self.render(state, self.snapshot)
+
+    def render_catalog(self):
+        selected = self.catalog_tree.selection()
+        query = self.catalog_search_value.get()
+        self.catalog_tree.delete(*self.catalog_tree.get_children())
+        for domain, item in self.catalog.items():
+            if catalog_matches(item, query):
+                self.catalog_tree.insert("", "end", iid=domain,
+                                         values=(item["name_ru"] if LANG == "ru" else item["name_en"], domain))
+        if selected and self.catalog_tree.exists(selected[0]):
+            self.catalog_tree.selection_set(selected[0])
 
     def start(self, operation, done):
         if self.busy:
@@ -482,6 +503,8 @@ def main():
             raise SystemExit("Для управления маршрутами нужны права администратора.")
         return
     root = tk.Tk()
+    if ICON_PATH.is_file():
+        root.iconbitmap(default=str(ICON_PATH))
     try:
         Window(root)
     except Exception as exc:
