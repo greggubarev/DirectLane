@@ -1,0 +1,8 @@
+.venv/
+build/
+dist/
+dist-single/
+__pycache__/
+*.spec
+*.pyc
+domains.json

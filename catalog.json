@@ -1,0 +1,12 @@
+[
+  {"domain": "ozon.ru", "name_en": "Ozon", "name_ru": "Ozon", "hosts": ["www.ozon.ru"]},
+  {"domain": "wildberries.ru", "name_en": "Wildberries", "name_ru": "Wildberries", "hosts": ["www.wildberries.ru"]},
+  {"domain": "ru.wikipedia.org", "name_en": "Wikipedia (Russian)", "name_ru": "Википедия (русская)", "hosts": ["upload.wikimedia.org"]},
+  {"domain": "lemanapro.ru", "name_en": "Lemana Pro", "name_ru": "Лемана ПРО", "hosts": ["www.lemanapro.ru", "api.lemanapro.ru", "auth.lemanapro.ru", "order.lemanapro.ru", "cdn.lemanapro.ru"]},
+  {"domain": "nspd.gov.ru", "name_en": "National Spatial Data Portal", "name_ru": "НСПД", "hosts": ["www.nspd.gov.ru", "sso.nspd.gov.ru"]},
+  {"domain": "sudact.ru", "name_en": "SudAct", "name_ru": "СудАкт", "hosts": ["www.sudact.ru"]},
+  {"domain": "gosuslugi.ru", "name_en": "Gosuslugi", "name_ru": "Госуслуги", "hosts": ["www.gosuslugi.ru"]},
+  {"domain": "nalog.gov.ru", "name_en": "Federal Tax Service", "name_ru": "ФНС России", "hosts": ["www.nalog.gov.ru", "service.nalog.ru"]},
+  {"domain": "mos.ru", "name_en": "Moscow services", "name_ru": "Мос.ру", "hosts": ["www.mos.ru"]},
+  {"domain": "avito.ru", "name_en": "Avito", "name_ru": "Авито", "hosts": ["www.avito.ru"]}
+]
