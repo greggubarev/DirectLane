@@ -6,6 +6,17 @@ DirectLane opens selected websites outside your VPN on Windows. It is useful whe
 
 The app looks up the site's IPv4 addresses and adds Windows routes through your regular internet connection. Your VPN stays connected for other traffic. You can see the addresses in the app, refresh them when they change, and remove a domain when you no longer need the exception.
 
+## VPN clients
+
+DirectLane is useful when a Windows VPN client does not let you exclude individual websites, even if it offers other kinds of split tunneling. These are setups where it may help:
+
+- [hidemy.name VPN for Windows](https://hide-my-name.cc/faq/vpn/vpn-installation-and-configuration/windows/customization/): its documented settings show routes and a kill switch, but no website exception list. DirectLane was developed for a hidemy.name setup where site exceptions were unavailable.
+- [OpenVPN Connect for Windows](https://openvpn.net/connect-docs/app-settings-windows.html) with a full-tunnel profile: its client settings do not include a personal website exception list. OpenVPN servers can provide [their own split-tunnel rules](https://openvpn.net/as-docs/v3/tutorials/tutorial--full-and-split-tunnel-vpn.html), so this is not a claim that OpenVPN lacks split tunneling.
+- [Outline Client for Windows](https://github.com/OutlineFoundation/outline-apps/issues/887): selective routing remains an open feature request. Test your installed version before relying on DirectLane because Outline also manages system routing.
+- [WireGuard for Windows](https://github.com/WireGuard/wireguard-windows/blob/master/docs/netquirk.md): its `AllowedIPs` setting handles IP ranges, not a changing list of website addresses. A full-tunnel `/0` profile enables WireGuard's restrictive firewall and can block DirectLane's routes. Use DirectLane only with a profile that permits direct traffic.
+
+This is a list of possible use cases, not a compatibility guarantee. DirectLane works only when the VPN lets Windows send traffic through a more specific route to the regular gateway. If your VPN already has working website exceptions, use those instead.
+
 ## Download
 
 Get the latest build from [Releases](https://github.com/greggubarev/DirectLane/releases):
@@ -47,6 +58,17 @@ Source files are UTF-8. Keep `routes.ps1` and `catalog.json` next to `manager.py
 DirectLane помогает открывать выбранные сайты через обычное подключение, пока VPN остаётся включённым. Это пригодится, если VPN-клиент не умеет добавлять сайты в исключения. Домен можно ввести вручную или выбрать из списка.
 
 Программа узнаёт IPv4-адреса сайта через DNS и добавляет маршруты через ваш обычный интернет-шлюз. Добавленные домены и адреса видны в окне. Если адреса изменились, их можно обновить. Если исключение больше не нужно, домен можно удалить.
+
+### С какими VPN-клиентами пригодится
+
+DirectLane полезна, когда Windows-клиент VPN не позволяет исключить отдельные сайты. При этом у клиента может быть другой вид раздельного туннелирования, например по приложениям или IP-адресам.
+
+- [hidemy.name VPN для Windows](https://hide-my-name.cc/faq/vpn/vpn-installation-and-configuration/windows/customization/): в описанных настройках есть просмотр маршрутов и Kill Switch, но нет списка исключений сайтов. DirectLane создавалась для конфигурации hidemy.name, где такие исключения были недоступны.
+- [OpenVPN Connect для Windows](https://openvpn.net/connect-docs/app-settings-windows.html) с профилем, направляющим весь трафик через VPN: в настройках клиента нет личного списка исключений сайтов. При этом [раздельное туннелирование можно настроить на сервере OpenVPN](https://openvpn.net/as-docs/v3/tutorials/tutorial--full-and-split-tunnel-vpn.html).
+- [Outline Client для Windows](https://github.com/OutlineFoundation/outline-apps/issues/887): выборочная маршрутизация остаётся открытым запросом на функцию. Совместимость с установленной версией нужно проверить, поскольку Outline сам управляет маршрутами.
+- [WireGuard для Windows](https://github.com/WireGuard/wireguard-windows/blob/master/docs/netquirk.md): параметр `AllowedIPs` работает с диапазонами IP, а не с меняющимися адресами сайтов. Профиль с маршрутом `/0` включает строгие правила брандмауэра WireGuard, которые могут блокировать обход. DirectLane имеет смысл использовать только с профилем, разрешающим прямой трафик.
+
+Это примеры подходящих сценариев, а не гарантия совместимости. VPN-клиент должен разрешать Windows отправлять трафик по более точному маршруту через обычный шлюз. Если в вашем клиенте уже работают исключения сайтов, удобнее использовать их.
 
 Скачайте нужный архив на [странице выпусков](https://github.com/greggubarev/DirectLane/releases). Папочную версию нужно распаковать целиком и запустить `DirectLane/DirectLane.exe`. В архиве `DirectLane-v0.1.1-windows-single-file.zip` находится один `DirectLane.exe`, но он может запускаться дольше. Windows запросит права администратора для изменения маршрутов. Список доменов хранится в `%LOCALAPPDATA%\DirectLane\domains.json` и не входит в архив.
 
