@@ -2,6 +2,41 @@
 
 <img src="assets/directlane-icon.png" alt="DirectLane icon" width="96">
 
+DirectLane помогает открывать выбранные сайты через обычное подключение, пока VPN остаётся включённым. Это пригодится, если VPN-клиент не умеет добавлять сайты в исключения. Домен можно ввести вручную или выбрать из списка.
+
+Программа узнаёт IPv4-адреса сайта через DNS и добавляет маршруты через ваш обычный интернет-шлюз. Добавленные домены и адреса видны в окне. Если адреса изменились, их можно обновить. Если исключение больше не нужно, домен можно удалить.
+
+### С какими VPN-клиентами пригодится
+
+DirectLane полезна, когда Windows-клиент VPN не позволяет исключить отдельные сайты. При этом у клиента может быть другой вид раздельного туннелирования, например по приложениям или IP-адресам.
+
+- [hidemy.name VPN для Windows](https://hide-my-name.cc/faq/vpn/vpn-installation-and-configuration/windows/customization/): в описанных настройках есть просмотр маршрутов и Kill Switch, но нет списка исключений сайтов. DirectLane создавалась для конфигурации hidemy.name, где такие исключения были недоступны.
+- [OpenVPN Connect для Windows](https://openvpn.net/connect-docs/app-settings-windows.html) с профилем, направляющим весь трафик через VPN: в настройках клиента нет личного списка исключений сайтов. При этом [раздельное туннелирование можно настроить на сервере OpenVPN](https://openvpn.net/as-docs/v3/tutorials/tutorial--full-and-split-tunnel-vpn.html).
+- [Outline Client для Windows](https://github.com/OutlineFoundation/outline-apps/issues/887): выборочная маршрутизация остаётся открытым запросом на функцию. Совместимость с установленной версией нужно проверить, поскольку Outline сам управляет маршрутами.
+- [WireGuard для Windows](https://github.com/WireGuard/wireguard-windows/blob/master/docs/netquirk.md): параметр `AllowedIPs` работает с диапазонами IP, а не с меняющимися адресами сайтов. Профиль с маршрутом `/0` включает строгие правила брандмауэра WireGuard, которые могут блокировать обход. DirectLane имеет смысл использовать только с профилем, разрешающим прямой трафик.
+
+Это примеры подходящих сценариев, а не гарантия совместимости. VPN-клиент должен разрешать Windows отправлять трафик по более точному маршруту через обычный шлюз. Если в вашем клиенте уже работают исключения сайтов, удобнее использовать их.
+
+Скачайте нужный архив на [странице выпусков](https://github.com/greggubarev/DirectLane/releases). Папочную версию нужно распаковать целиком и запустить `DirectLane/DirectLane.exe`. В архиве `DirectLane-v0.1.1-windows-single-file.zip` находится один `DirectLane.exe`, но он может запускаться дольше. Windows запросит права администратора для изменения маршрутов. Список доменов хранится в `%LOCALAPPDATA%\DirectLane\domains.json` и не входит в архив.
+
+По умолчанию интерфейс на английском. Переключатель на русский находится вверху окна.
+Во встроенном списке 42 сайта. Их можно искать по названию или домену.
+
+Маршруты работают с IP-адресами, а не с отдельными страницами. Если несколько сайтов используют один IP, они могут открываться через обычное подключение вместе. IPv6 программа не меняет. VPN-клиент с Kill Switch может блокировать прямое соединение. Сайты в [списке](catalog.json) приведены для удобства: не каждый из них обязательно испытывает проблемы при работе через VPN.
+
+Подборка основана на категориях проекта [RU Direct](https://github.com/kyoresuas/ru-direct). DirectLane узнаёт текущие адреса при добавлении сайта. Программа не загружает чужие списки маршрутов и не добавляет все 42 сайта автоматически.
+
+Правила, созданные вне DirectLane, видны на вкладке `Другие маршруты`, но программа их не удаляет. Если изменился обычный шлюз или VPN-клиент заменил маршруты при переключении сервера, обновите IP нужных доменов.
+
+Для сборки нужны Windows 10 или 11, Python 3.14 с `tkinter`, PowerShell 5.1 или новее и доступ в интернет для установки зависимости. В папке репозитория выполните:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
+```
+
+Получатся `dist\DirectLane\DirectLane.exe` и `dist-single\DirectLane.exe`. Запуск без сборки: `pyw -3 manager.pyw`. Проверка: `py -3 -m unittest discover -p 'test_*.py' -v`.
+
+## English
 DirectLane opens selected websites outside your VPN on Windows. It is useful when a VPN client does not offer split tunneling for websites. You can add a domain yourself or pick one from the built-in list.
 
 The app looks up the site's IPv4 addresses and adds Windows routes through your regular internet connection. Your VPN stays connected for other traffic. You can see the addresses in the app, refresh them when they change, and remove a domain when you no longer need the exception.
@@ -52,41 +87,5 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
 The script creates a local virtual environment and builds `dist\DirectLane\DirectLane.exe` and `dist-single\DirectLane.exe`. To run without building, use `pyw -3 manager.pyw`. To run the tests, use `py -3 -m unittest discover -p 'test_*.py' -v`.
 
 Source files are UTF-8. Keep `routes.ps1` and `catalog.json` next to `manager.pyw` when running from source. The build script does not add or remove routes.
-
-## Русский
-
-DirectLane помогает открывать выбранные сайты через обычное подключение, пока VPN остаётся включённым. Это пригодится, если VPN-клиент не умеет добавлять сайты в исключения. Домен можно ввести вручную или выбрать из списка.
-
-Программа узнаёт IPv4-адреса сайта через DNS и добавляет маршруты через ваш обычный интернет-шлюз. Добавленные домены и адреса видны в окне. Если адреса изменились, их можно обновить. Если исключение больше не нужно, домен можно удалить.
-
-### С какими VPN-клиентами пригодится
-
-DirectLane полезна, когда Windows-клиент VPN не позволяет исключить отдельные сайты. При этом у клиента может быть другой вид раздельного туннелирования, например по приложениям или IP-адресам.
-
-- [hidemy.name VPN для Windows](https://hide-my-name.cc/faq/vpn/vpn-installation-and-configuration/windows/customization/): в описанных настройках есть просмотр маршрутов и Kill Switch, но нет списка исключений сайтов. DirectLane создавалась для конфигурации hidemy.name, где такие исключения были недоступны.
-- [OpenVPN Connect для Windows](https://openvpn.net/connect-docs/app-settings-windows.html) с профилем, направляющим весь трафик через VPN: в настройках клиента нет личного списка исключений сайтов. При этом [раздельное туннелирование можно настроить на сервере OpenVPN](https://openvpn.net/as-docs/v3/tutorials/tutorial--full-and-split-tunnel-vpn.html).
-- [Outline Client для Windows](https://github.com/OutlineFoundation/outline-apps/issues/887): выборочная маршрутизация остаётся открытым запросом на функцию. Совместимость с установленной версией нужно проверить, поскольку Outline сам управляет маршрутами.
-- [WireGuard для Windows](https://github.com/WireGuard/wireguard-windows/blob/master/docs/netquirk.md): параметр `AllowedIPs` работает с диапазонами IP, а не с меняющимися адресами сайтов. Профиль с маршрутом `/0` включает строгие правила брандмауэра WireGuard, которые могут блокировать обход. DirectLane имеет смысл использовать только с профилем, разрешающим прямой трафик.
-
-Это примеры подходящих сценариев, а не гарантия совместимости. VPN-клиент должен разрешать Windows отправлять трафик по более точному маршруту через обычный шлюз. Если в вашем клиенте уже работают исключения сайтов, удобнее использовать их.
-
-Скачайте нужный архив на [странице выпусков](https://github.com/greggubarev/DirectLane/releases). Папочную версию нужно распаковать целиком и запустить `DirectLane/DirectLane.exe`. В архиве `DirectLane-v0.1.1-windows-single-file.zip` находится один `DirectLane.exe`, но он может запускаться дольше. Windows запросит права администратора для изменения маршрутов. Список доменов хранится в `%LOCALAPPDATA%\DirectLane\domains.json` и не входит в архив.
-
-По умолчанию интерфейс на английском. Переключатель на русский находится вверху окна.
-Во встроенном списке 42 сайта. Их можно искать по названию или домену.
-
-Маршруты работают с IP-адресами, а не с отдельными страницами. Если несколько сайтов используют один IP, они могут открываться через обычное подключение вместе. IPv6 программа не меняет. VPN-клиент с Kill Switch может блокировать прямое соединение. Сайты в [списке](catalog.json) приведены для удобства: не каждый из них обязательно испытывает проблемы при работе через VPN.
-
-Подборка основана на категориях проекта [RU Direct](https://github.com/kyoresuas/ru-direct). DirectLane узнаёт текущие адреса при добавлении сайта. Программа не загружает чужие списки маршрутов и не добавляет все 42 сайта автоматически.
-
-Правила, созданные вне DirectLane, видны на вкладке `Другие маршруты`, но программа их не удаляет. Если изменился обычный шлюз или VPN-клиент заменил маршруты при переключении сервера, обновите IP нужных доменов.
-
-Для сборки нужны Windows 10 или 11, Python 3.14 с `tkinter`, PowerShell 5.1 или новее и доступ в интернет для установки зависимости. В папке репозитория выполните:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build.ps1
-```
-
-Получатся `dist\DirectLane\DirectLane.exe` и `dist-single\DirectLane.exe`. Запуск без сборки: `pyw -3 manager.pyw`. Проверка: `py -3 -m unittest discover -p 'test_*.py' -v`.
 
 Лицензия: [MIT](LICENSE).
